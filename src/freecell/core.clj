@@ -4,4 +4,7 @@
   (:require [freecell.calc :as calc]))
 
 (defn -main [& args]
-  (display/board (calc/continuity (defs/board (shuffle (defs/deck))))))
+  (let [board (shuffle (defs/deck))]
+    (do
+      (display/board (defs/board board))
+      (display/board (calc/continuity (defs/board board))))))
