@@ -19,9 +19,9 @@
 (defn- pretty-continuity [continuity]
   (cond
     (= continuity nil)   "  "
-    (= continuity :up)   (str " " \u2518)
+    (= continuity :up)   (str " " \u2510)
     (= continuity :both) (str " " \u2502)
-    (= continuity :down) (str " " \u2510)))
+    (= continuity :down) (str " " \u2518)))
 
 (defn- pretty-card [{:keys [suit rank continuity] :as card}]
   (str (pretty-rank rank)
