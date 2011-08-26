@@ -46,19 +46,16 @@
        "   "))
 
 (defn- pretty-cascades [cascades]
-  (map (fn [depth]
-         (apply str (map (fn [cascade]
-                           (pretty-card (get cascade depth)))
-                         cascades)))
-       (range (apply max (map count cascades)))))
+  (for [depth (range (apply max (map count cascades)))]
+    (apply str (for [c cascades]
+                 (pretty-card (get c depth))))))
 
 (defn- pretty-cells [cells]
   (map pretty-card cells))
 
 (defn- pretty-foundations [foundations]
-  (map (fn [[suit rank]]
-         (pretty-card {:suit suit :rank rank}))
-       foundations))
+  (for [[suit rank] foundations]
+    (pretty-card {:suit suit :rank rank})))
 
 (defn board [{:keys [freecells foundations cascades]}]
   (do
