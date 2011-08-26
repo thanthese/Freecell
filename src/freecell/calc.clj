@@ -2,12 +2,10 @@
   (:require [freecell.display :as display])
   (:require [freecell.definitions :as defs]))
 
-;; continuity
-
 (defn nil-wrap [v]
   (vec (cons nil (conj v nil))))
 
-(defn cascade-continuity [cascade]
+(defn cascade-continuity [_ cascade]
   (vec (for [[bottom middle top] (partition 3 1 (nil-wrap cascade))]
          (let [goes-dn (defs/goes-on-cascade? bottom middle)
                goes-up (defs/goes-on-cascade? middle top)
@@ -17,36 +15,23 @@
                  goes-dn (assoc middle :continuity :down)
                  :else middle)))))
 
-(defn continuity [board]
-  (update-in board [:cascades]
-             #(vec (map cascade-continuity %))))
+(defn cascade-mobile [board cascade]
+  (let [tops (map last (:cascades board))]
+    (vec (for [card cascade]
+           (assoc card :cascade-mobile
+                  (some #(defs/goes-on-cascade? % card) tops))))))
 
-;; cascade mobility
-
-(def top-card last)
-
-(defn top-cards [board]
-  (map top-card (:cascades board)))
-
-(defn cascade-mobile [tops cascade]
-  (vec (for [card cascade]
-         (assoc card :cascade-mobile
-                (some #(defs/goes-on-cascade? % card) tops)))))
-
-(defn cascades-mobile [board]
-  (update-in board [:cascades]
-             #(vec (map (partial cascade-mobile (top-cards board)) %))))
-
-;; foundation mobility
-
-(defn foundation-mobile [foundations cascade]
+(defn foundation-mobile [board cascade]
   (vec (for [card cascade]
          (assoc card :foundation-mobile
-                (defs/goes-on-foundation? foundations card)))))
+                (defs/goes-on-foundation? (:foundations board) card)))))
 
-(defn foundations-mobile [board]
+(defn calculate-annotations [board]
   (update-in board [:cascades]
-             #(vec (map (partial foundation-mobile (:foundations board)) %))))
+             #(vec (map (comp (partial cascade-continuity board)
+                              (partial cascade-mobile board)
+                              (partial foundation-mobile board))
+                        %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -64,8 +49,8 @@
 
 (comment
 
-  (display/board (foundations-mobile sample-board))
+  (display/board (calculate-annotations sample-board))
 
-  (clojure.pprint/pprint (foundations-mobile sample-board))
+  (clojure.pprint/pprint (calculate-annotations sample-board))
 
   )
