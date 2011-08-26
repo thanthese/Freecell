@@ -2,34 +2,51 @@
   (:require [freecell.display :as display])
   (:require [freecell.definitions :as defs]))
 
+;; continuity
+
 (defn nil-wrap [v]
   (vec (cons nil (conj v nil))))
 
 (defn cascade-continuity [cascade]
-  (vec (map
-         (fn [[bottom middle top]]
-           (let [goes-dn (defs/goes-on-cascade? bottom middle)
-                 goes-up (defs/goes-on-cascade? middle top)]
-             (cond (and goes-up goes-dn) (assoc middle :continuity :both)
-                   goes-up (assoc middle :continuity :up)
-                   goes-dn (assoc middle :continuity :down)
-                   :else middle)))
-         (partition 3 1 (nil-wrap cascade)))))
+  (vec (for [[bottom middle top] (partition 3 1 (nil-wrap cascade))]
+         (let [goes-dn (defs/goes-on-cascade? bottom middle)
+               goes-up (defs/goes-on-cascade? middle top)
+               two-way (and goes-up goes-dn)]
+           (cond two-way (assoc middle :continuity :both)
+                 goes-up (assoc middle :continuity :up)
+                 goes-dn (assoc middle :continuity :down)
+                 :else middle)))))
 
 (defn continuity [board]
-  (update-in board [:cascades] (fn [cs] (vec (map cascade-continuity cs)))))
+  (update-in board [:cascades]
+             #(vec (map cascade-continuity %))))
+
+;; cascade mobility
 
 (def top-card last)
 
 (defn top-cards [board]
   (map top-card (:cascades board)))
 
-(defn cascade-mobile [board]
-  (let [bottoms (top-cards board)]
+(defn cascade-mobile [tops cascade]
+  (vec (for [card cascade]
+         (assoc card :cascade-mobile
+                (some #(defs/goes-on-cascade? % card) tops)))))
 
-(let [a [1 2 3 4 5]]
-  (update-in a [(dec (count a))] inc))
+(defn cascades-mobile [board]
+  (update-in board [:cascades]
+             #(vec (map (partial cascade-mobile (top-cards board)) %))))
 
+;; foundation mobility
+
+(defn foundation-mobile [foundations cascade]
+  (vec (for [card cascade]
+         (assoc card :foundation-mobile
+                (defs/goes-on-foundation? foundations card)))))
+
+(defn foundations-mobile [board]
+  (update-in board [:cascades]
+             #(vec (map (partial foundation-mobile (:foundations board)) %))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -45,4 +62,10 @@
               [{:suit :heart, :rank 6} {:suit :spade, :rank 2} {:suit :spade, :rank 8} {:suit :spade, :rank 5} {:suit :club, :rank 5} {:suit :diamond, :rank 0}]
               [{:suit :club, :rank 9} {:suit :diamond, :rank 4} {:suit :diamond, :rank 1} {:suit :club, :rank 10} {:suit :diamond, :rank 10} {:suit :club, :rank 1}]]})
 
-(display/board sample-board)
+(comment
+
+  (display/board (foundations-mobile sample-board))
+
+  (clojure.pprint/pprint (foundations-mobile sample-board))
+
+  )

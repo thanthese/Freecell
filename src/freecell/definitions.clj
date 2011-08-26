@@ -40,3 +40,9 @@
        (one-bigger? (:rank bottom-card)
                     (:rank top-card))))
 
+(defn goes-on-foundation? [foundations card]
+  (let [c-rank (:rank card)
+        f-rank ((:suit card) foundations)]
+    (if (nil? f-rank)
+      (= c-rank 0)
+      (one-bigger? c-rank f-rank))))

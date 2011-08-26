@@ -23,11 +23,27 @@
     (= continuity :both) (str " " \u2502)
     (= continuity :down) (str " " \u2518)))
 
-(defn- pretty-card [{:keys [suit rank continuity] :as card}]
+(defn- pretty-cascade-mobility [mobility]
+  (if mobility
+    "*"
+    " "))
+
+(defn- pretty-foundation-mobility [mobility]
+  (if mobility
+    \u2600
+    " "))
+
+(defn- pretty-card [{:keys [suit
+                            rank
+                            continuity
+                            cascade-mobile
+                            foundation-mobile] :as card}]
   (str (pretty-rank rank)
        (pretty-suit suit)
        (pretty-continuity continuity)
-       "  "))
+       (pretty-cascade-mobility cascade-mobile)
+       (pretty-foundation-mobility foundation-mobile)
+       "   "))
 
 (defn- pretty-cascades [cascades]
   (map (fn [depth]
@@ -44,15 +60,12 @@
          (pretty-card {:suit suit :rank rank}))
        foundations))
 
-(defn- pretty-separator []
-  "- - - - - - - - - - - + - - - - - - - - - - -")
-
 (defn board [{:keys [freecells foundations cascades]}]
   (do
     (println)
     (println (str (apply str (pretty-cells freecells))
                   (apply str (pretty-foundations foundations))))
-    (println (pretty-separator))
+    (println)
     (doseq [line (pretty-cascades cascades)]
       (println line))
     (println)))
