@@ -31,7 +31,7 @@
   (= bigger (inc smaller)))
 
 (defn goes-on-cascade?
-  "'Bottom card' refers to the z-index.  Doesn't consider empty cascades"
+  "'Bottom card' refers to the z-index.  Doesn't consider empty cascades."
   [bottom-card top-card]
   (and top-card
        bottom-card
