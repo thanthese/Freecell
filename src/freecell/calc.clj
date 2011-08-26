@@ -16,7 +16,9 @@
                  :else middle)))))
 
 (defn cascade-mobile [board cascade]
-  (let [tops (map last (:cascades board))]
+  (let [other-cascades (remove (partial defs/cascades=? cascade)
+                               (board :cascades))
+        tops (map last other-cascades)]
     (vec (for [card cascade]
            (assoc card :cascade-mobile
                   (some #(defs/goes-on-cascade? % card) tops))))))
@@ -38,7 +40,7 @@
 (def sample-board
   {:freecells [nil {:suit :diamond, :rank 2} {:suit :diamond, :rank 2} {:suit :diamond, :rank 2}],
    :foundations {:heart nil, :spade 4, :diamond nil, :club nil},
-   :cascades [[{:suit :diamond, :rank 12} {:suit :heart, :rank 10} {:continuity :up, :suit :club, :rank 12} {:continuity :down, :suit :heart, :rank 11} {:suit :heart, :rank 2} {:suit :club, :rank 7} {:suit :heart, :rank 9}]
+   :cascades [[{:suit :spade, :rank 8} {:suit :diamond, :rank 12} {:suit :heart, :rank 10} {:continuity :up, :suit :club, :rank 12} {:continuity :down, :suit :heart, :rank 11} {:suit :heart, :rank 2} {:suit :club, :rank 7} {:suit :heart, :rank 9}]
               [{:suit :diamond, :rank 2} {:suit :club, :rank 0} {:suit :diamond, :rank 11} {:suit :club, :rank 4} {:suit :heart, :rank 12} {:suit :heart, :rank 4} {:suit :heart, :rank 0}]
               [{:suit :diamond, :rank 7} {:suit :diamond, :rank 9} {:suit :club, :rank 3} {:suit :spade, :rank 9} {:suit :club, :rank 8} {:suit :spade, :rank 10} {:suit :spade, :rank 7}]
               [{:suit :heart, :rank 8} {:suit :diamond, :rank 3} {:suit :spade, :rank 0} {:suit :spade, :rank 11} {:suit :spade, :rank 6} {:suit :club, :rank 11}]

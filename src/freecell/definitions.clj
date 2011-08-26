@@ -27,6 +27,13 @@
               (subvec deck 40 46)
               (subvec deck 46 52)]})
 
+(defn cascades=? [cascade-a cascade-b]
+  (every? identity (map (fn [{rank-a :rank suit-a :suit}
+                             {rank-b :rank suit-b :suit}]
+                          (and (= rank-a rank-b)
+                               (= suit-a suit-b)))
+                        cascade-a cascade-b)))
+
 (defn one-bigger? [bigger smaller]
   (= bigger (inc smaller)))
 
