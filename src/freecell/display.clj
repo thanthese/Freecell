@@ -33,16 +33,23 @@
     \u2600
     " "))
 
+(defn- pretty-duplicate [duplicate]
+  (if duplicate
+    "d"
+    " "))
+
 (defn- pretty-card [{:keys [suit
                             rank
                             continuity
                             cascade-mobile
-                            foundation-mobile] :as card}]
+                            foundation-mobile
+                            duplicate] :as card}]
   (str (pretty-rank rank)
        (pretty-suit suit)
        (pretty-continuity continuity)
        (pretty-cascade-mobility cascade-mobile)
        (pretty-foundation-mobility foundation-mobile)
+       (pretty-duplicate duplicate)
        "   "))
 
 (defn- pretty-cascades [cascades]
