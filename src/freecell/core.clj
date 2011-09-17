@@ -1,11 +1,11 @@
 (ns freecell.core
   (:require [freecell.definitions :as defs])
-  (:require [freecell.display :as display])
-  (:require [freecell.calc :as calc]))
+  (:require [freecell.display :as disp])
+  (:require [freecell.annotations :as anno]))
 
 (defn -main [& args]
   (let [deck (shuffle (defs/deck))]
     (-> deck
       defs/board
-      calc/calculate-annotations
-      display/board)))
+      anno/calculate-annotations
+      disp/board)))

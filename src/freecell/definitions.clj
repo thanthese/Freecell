@@ -3,11 +3,11 @@
 (def suits [:club :diamond :spade :heart])
 (def ranks (range 13))
 
-(defn red? [suit]
+(defn- red? [suit]
   (or (= suit :heart)
       (= suit :diamond)))
 
-(defn opposite-color? [suit-a suit-b]
+(defn- opposite-color? [suit-a suit-b]
   (not= (red? suit-a)
         (red? suit-b)))
 
@@ -27,18 +27,31 @@
               (subvec deck 40 46)
               (subvec deck 46 52)]})
 
-(defn cascades=? [cascade-a cascade-b]
-  (every? identity (map (fn [{rank-a :rank suit-a :suit}
-                             {rank-b :rank suit-b :suit}]
-                          (and (= rank-a rank-b)
-                               (= suit-a suit-b)))
+(defn color-card
+  "A simplified card, showing only rank and color."
+  [{suit :suit rank :rank}]
+  {:red (red? suit)
+   :rank rank})
+
+(defn base-card
+  "Base card, no annotations."
+  [{suit :suit rank :rank}]
+  {:suit suit :rank rank})
+
+(defn cascades=?
+  "Cascades equality.  Ignores annotations."
+  [cascade-a cascade-b]
+  (every? identity (map (fn [card-a card-b]
+                          (= (base-card card-a)
+                             (base-card card-b)))
                         cascade-a cascade-b)))
 
-(defn one-bigger? [bigger smaller]
-  (= bigger (inc smaller)))
+(defn- one-bigger? [bigger-rank smaller-rank]
+  (= bigger-rank (inc smaller-rank)))
 
 (defn goes-on-cascade?
-  "'Bottom card' refers to the z-index.  Doesn't consider empty cascades."
+  "Whether the top card can be played on the bottom card.  'Bottom card' refers
+  to the z-index.  Doesn't consider empty cascades."
   [bottom-card top-card]
   (and top-card
        bottom-card
@@ -47,7 +60,9 @@
        (one-bigger? (:rank bottom-card)
                     (:rank top-card))))
 
-(defn goes-on-foundation? [foundations card]
+(defn goes-on-foundation?
+  "Whether the card could be played to the foundation piles."
+  [foundations card]
   (let [c-rank (:rank card)
         f-rank ((:suit card) foundations)]
     (if (nil? f-rank)
