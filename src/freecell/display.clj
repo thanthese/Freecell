@@ -24,10 +24,10 @@
     (= continuity :down) (str " " \u2518)))
 
 (defn- pretty-cascade-mobility [mobility]
-  (if mobility \u2605 " "))
+  (if mobility \u263C " "))
 
 (defn- pretty-foundation-mobility [mobility]
-  (if mobility \u263C " "))
+  (if mobility \u2605 " "))
 
 (defn- pretty-duplicate [duplicate]
   (if duplicate \u2630 " "))
