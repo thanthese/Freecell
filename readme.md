@@ -2,9 +2,15 @@
 
 Command-line freecell.  Features hint system.
 
-## Usage
+## Usage from REPL
 
     lein repl
+
+## Package as jar
+
+    lein uberjar
+
+    java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
 
 ## License
 
