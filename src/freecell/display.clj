@@ -1,5 +1,14 @@
 (ns freecell.display)
 
+(def cascade-mobility-symbol \u263C)
+(def foundation-mobility-symbol \u2605)
+(def duplicate-symbol \u2630)
+(def tangled-symbol \u00A7)
+
+(def continuity-up-symbol   \u2510)
+(def continuity-both-symbol \u2502)
+(def continuity-down-symbol \u2518)
+
 (defn- pretty-rank [rank]
   (cond (= rank nil) " "
         (= rank   0) "A"
@@ -19,21 +28,9 @@
 (defn- pretty-continuity [continuity]
   (cond
     (= continuity nil)   "  "
-    (= continuity :up)   (str " " \u2510)
-    (= continuity :both) (str " " \u2502)
-    (= continuity :down) (str " " \u2518)))
-
-(defn- pretty-cascade-mobility [mobility]
-  (if mobility \u263C " "))
-
-(defn- pretty-foundation-mobility [mobility]
-  (if mobility \u2605 " "))
-
-(defn- pretty-duplicate [duplicate]
-  (if duplicate \u2630 " "))
-
-(defn- pretty-tangled [tangled]
-  (if tangled \u00A7 " "))
+    (= continuity :up)   (str " " continuity-up-symbol)
+    (= continuity :both) (str " " continuity-both-symbol)
+    (= continuity :down) (str " " continuity-down-symbol)))
 
 (defn- pretty-card [{:keys [suit
                             rank
@@ -45,10 +42,10 @@
   (str (pretty-rank rank)
        (pretty-suit suit)
        (pretty-continuity continuity)
-       (pretty-cascade-mobility cascade-mobile)
-       (pretty-foundation-mobility foundation-mobile)
-       (pretty-duplicate duplicate)
-       (pretty-tangled tangled)
+       (if cascade-mobile cascade-mobility-symbol " ")
+       (if foundation-mobile foundation-mobility-symbol " ")
+       (if duplicate duplicate-symbol " ")
+       (if tangled tangled-symbol " ")
        "  "))
 
 (defn- pretty-cascades [cascades]
