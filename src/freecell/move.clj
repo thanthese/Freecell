@@ -20,6 +20,14 @@
         (assoc-in [:freecells freecell-index ] cascade-card))
       board)))
 
+(defn- freecell->foundation [board freecell-index]
+  (let [card (get-in board [:freecells freecell-index])]
+    (if (defs/goes-on-foundation? (:foundations board) card)
+      (-> board
+        (assoc-in [:freecells freecell-index] nil)
+        (assoc-in [:foundations (:suit card)] (:rank card)))
+      board)))
+
 (defn move
   "Move a single card on the board.  Codes:
   - a-f: columns 1-4
@@ -32,6 +40,10 @@
         (cascade->freecell board
                            (cascade-index from-code)
                            (freecell-index to-code))
+        ,,,
+        (and (freecell-index from-code)
+             (foundation-code? to-code))
+        (freecell->foundation board (freecell-index from-code))
         ,,,
         :else board))
 
@@ -47,4 +59,10 @@
       (move "l" "r")
       (move "l" "e")
       (move "s" "q")
-      (move "f" "q"))))
+      (move "f" "q")
+      (move "f" "w")
+      (move "q" "u")
+      (move "a" "q")
+      (move "q" "u")
+      (move "q" "u")
+      (move "w" "u"))))
