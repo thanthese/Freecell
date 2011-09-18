@@ -68,8 +68,9 @@
 (defn goes-on-foundation?
   "Whether the card could be played to the foundation piles."
   [foundations card]
-  (let [c-rank (:rank card)
-        f-rank ((:suit card) foundations)]
-    (if (nil? f-rank)
-      (= c-rank 0)
-      (one-bigger? c-rank f-rank))))
+  (let [c-rank (:rank card)]
+    (when c-rank
+      (let [f-rank ((:suit card) foundations)]
+        (if (nil? f-rank)
+          (= c-rank 0)
+          (one-bigger? c-rank f-rank))))))

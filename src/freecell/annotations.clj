@@ -20,24 +20,42 @@
                  goes-dn (assoc middle :continuity :down)
                  :else middle)))))
 
+(defn- cascade-mobile-helper
+  "Vector of cards (for example, a cascade) with :cascade-mobile annotations
+  added.  True when card could be played to a non-empty cascade."
+  [vector tops]
+  (vec (for [card vector]
+           (assoc card :cascade-mobile
+                  (some #(defs/goes-on-cascade? % card) tops)))))
+
 (defn- cascade-mobile
   "Cascade with :cascade-mobile annotations added.  True when card could be
   played on any non-empty cascade."
   [board cascade]
   (let [other-cascades (remove (partial defs/cascades=? cascade)
-                               (board :cascades))
-        tops (map defs/top-card other-cascades)]
-    (vec (for [card cascade]
-           (assoc card :cascade-mobile
-                  (some #(defs/goes-on-cascade? % card) tops))))))
+                               (board :cascades))]
+    (cascade-mobile-helper cascade
+                           (map defs/top-card other-cascades))))
+
+(defn- freecell-to-cascade-mobile
+  "Board with :cascade-mobile annotations added to freecells."
+  [board]
+  (assoc board :freecells (cascade-mobile-helper
+                            (:freecells board)
+                            (map defs/top-card (:cascades board)))))
 
 (defn- foundation-mobile
-  "Cascade with :foundation-mobile annotations added.  True when card could be
-  played to its foundation pile."
-  [board cascade]
-  (vec (for [card cascade]
+  "Vector of cards (for example, a cascade) with :foundation-mobile annotations
+  added.  True when card could be played to its foundation pile."
+  [board vector]
+  (vec (for [card vector]
          (assoc card :foundation-mobile
                 (defs/goes-on-foundation? (:foundations board) card)))))
+
+(defn- freecell-to-foundation-mobile
+  "Board with :foundation-mobile annotations added to freecells."
+  [board]
+  (update-in board [:freecells] #(foundation-mobile board %)))
 
 (defn- duplicates
   "Cascade with :duplicate annotations added.  True when There are other cards
@@ -64,11 +82,13 @@
 (defn calculate-annotations
   "Board with annotations added."
   [board]
-  (update-in board [:cascades]
-             (fn [cascades]
-               (vec (map (comp continuity
-                               (partial cascade-mobile board)
-                               (partial foundation-mobile board)
-                               duplicates
-                               tangled)
-                         cascades)))))
+  (-> board (update-in [:cascades]
+                       (fn [cascades]
+                         (vec (map (comp continuity
+                                         (partial cascade-mobile board)
+                                         (partial foundation-mobile board)
+                                         duplicates
+                                         tangled)
+                                   cascades))))
+    freecell-to-cascade-mobile
+    freecell-to-foundation-mobile))
