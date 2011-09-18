@@ -28,6 +28,14 @@
         (assoc-in [:foundations (:suit card)] (:rank card)))
       board)))
 
+(defn- cascade->foundation [board cascade-index]
+  (let [card (defs/top-card (get-in board [:cascades cascade-index]))]
+    (if (defs/goes-on-foundation? (:foundations board) card)
+      (-> board
+        (update-in [:cascades cascade-index] pop)
+        (assoc-in [:foundations (:suit card)] (:rank card)))
+      board)))
+
 (defn move
   "Move a single card on the board.  Codes:
   - a-f: columns 1-4
@@ -35,17 +43,23 @@
   - q-r: freecells
   - u: all foundation piles"
   [board from-code to-code]
-  (cond (and (cascade-index from-code)
-             (freecell-index to-code))
-        (cascade->freecell board
-                           (cascade-index from-code)
-                           (freecell-index to-code))
-        ,,,
-        (and (freecell-index from-code)
-             (foundation-code? to-code))
-        (freecell->foundation board (freecell-index from-code))
-        ,,,
-        :else board))
+  (let [cascade-from (cascade-index from-code)
+        freecell-to (freecell-index to-code)
+        freecell-from (freecell-index from-code)
+        foundation-to (foundation-code? to-code)]
+    (cond (and cascade-from
+               freecell-to)
+          (cascade->freecell board cascade-from freecell-to)
+          ,,,
+          (and freecell-from
+               foundation-to)
+          (freecell->foundation board freecell-from)
+          ,,,
+          (and cascade-from
+               foundation-to)
+          (cascade->foundation board cascade-from)
+          ,,,
+          :else board)))
 
 ;;; temp testing
 
@@ -65,4 +79,7 @@
       (move "a" "q")
       (move "q" "u")
       (move "q" "u")
-      (move "w" "u"))))
+      (move "w" "u")
+      (move "s" "q")
+      (move "s" "u")
+      (move "s" "u"))))
