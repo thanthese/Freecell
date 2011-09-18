@@ -27,6 +27,11 @@
               (subvec deck 40 46)
               (subvec deck 46 52)]})
 
+(defn top-card
+  "Top card on the cascade, by z-index.  The one that can currently be moved."
+  [cascade]
+  (last cascade))
+
 (defn color-card
   "A simplified card, showing only rank and color."
   [{suit :suit rank :rank}]

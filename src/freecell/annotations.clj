@@ -4,7 +4,6 @@
 
 (defn- nil-wrap
   "Wrap vector with nil values.
-
   Ex: [2 3] -> [nil 2 3 nil]"
   [vector]
   (vec (cons nil (conj vector nil))))
@@ -27,7 +26,7 @@
   [board cascade]
   (let [other-cascades (remove (partial defs/cascades=? cascade)
                                (board :cascades))
-        tops (map last other-cascades)]
+        tops (map defs/top-card other-cascades)]
     (vec (for [card cascade]
            (assoc card :cascade-mobile
                   (some #(defs/goes-on-cascade? % card) tops))))))
