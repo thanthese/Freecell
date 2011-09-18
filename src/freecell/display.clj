@@ -39,14 +39,21 @@
                             foundation-mobile
                             duplicate
                             tangled] :as card}]
-  (str (pretty-rank rank)
-       (pretty-suit suit)
-       (pretty-continuity continuity)
-       (if cascade-mobile cascade-mobility-symbol " ")
-       (if foundation-mobile foundation-mobility-symbol " ")
-       (if duplicate duplicate-symbol " ")
-       (if tangled tangled-symbol " ")
-       "  "))
+  (let [pad (fn [string] (str string " "))]
+    (str (pretty-rank rank)
+         (pretty-suit suit)
+         (pretty-continuity continuity)
+         (if foundation-mobile
+           (pad foundation-mobility-symbol)
+           (if cascade-mobile
+             (pad cascade-mobility-symbol)
+             "  "))
+         (if duplicate
+           (pad duplicate-symbol)
+           (if tangled
+             (pad tangled-symbol)
+             "  "))
+         "  ")))
 
 (defn- pretty-cascades [cascades]
   (for [depth (range (apply max (map count cascades)))]
