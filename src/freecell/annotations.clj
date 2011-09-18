@@ -82,13 +82,12 @@
 (defn calculate-annotations
   "Board with annotations added."
   [board]
-  (-> board (update-in [:cascades]
-                       (fn [cascades]
-                         (vec (map (comp continuity
-                                         (partial cascade-mobile board)
-                                         (partial foundation-mobile board)
-                                         duplicates
-                                         tangled)
-                                   cascades))))
+  (-> (assoc board :cascades
+             (vec (map (comp continuity
+                             (partial cascade-mobile board)
+                             (partial foundation-mobile board)
+                             duplicates
+                             tangled)
+                       (:cascades board))))
     freecell-to-cascade-mobile
     freecell-to-foundation-mobile))
