@@ -47,6 +47,19 @@
         (update-in [:cascades cascade-index] conj free-card))
       board)))
 
+(defn- cascade->cascade [board cascade-from cascade-to]
+  (let [fr-card (defs/top-card (get-in board [:cascades cascade-from]))
+        to-card (defs/top-card (get-in board [:cascades cascade-to]))]
+    (if (or (and fr-card
+                 (nil? to-card))
+            (and fr-card
+                 to-card
+                 (defs/goes-on-cascade? to-card fr-card)))
+      (-> board
+        (update-in [:cascades cascade-from] pop)
+        (update-in [:cascades cascade-to] conj fr-card))
+      board)))
+
 (defn- freecell->freecell [board freecell-from freecell-to]
   (let [fr-card (get-in board [:freecells freecell-from])
         to-card (get-in board [:freecells freecell-to])]
@@ -69,26 +82,24 @@
         free-fr (freecell-index from-code)
         foun-to (foundation-code? to-code)
         casc-to (cascade-index to-code)]
-    (cond (and casc-fr
-               free-to)
+    (cond (and casc-fr casc-to)
+          (cascade->cascade board casc-fr casc-to)
+          ,
+          (and casc-fr free-to)
           (cascade->freecell board casc-fr free-to)
-          ,,,
-          (and free-fr
-               foun-to)
-          (freecell->foundation board free-fr)
-          ,,,
-          (and casc-fr
-               foun-to)
+          ,
+          (and casc-fr foun-to)
           (cascade->foundation board casc-fr)
-          ,,,
-          (and free-fr
-               casc-to)
+          ,
+          (and free-fr casc-to)
           (freecell->cascade board free-fr casc-to)
-          ,,,
-          (and free-fr
-               free-to)
+          ,
+          (and free-fr free-to)
           (freecell->freecell board free-fr free-to)
-          ,,,
+          ,
+          (and free-fr foun-to)
+          (freecell->foundation board free-fr)
+          ,
           :else board)))
 
 ;;; temp testing
@@ -140,4 +151,8 @@
       (move "q" "r")
       (move "e" "w")
       (move "w" "e")
+      (move "a" "j")
+      (move "d" "f")
+      (move "d" "q")
+      (move "d" ";")
       )))
