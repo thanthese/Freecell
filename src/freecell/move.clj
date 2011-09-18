@@ -36,6 +36,17 @@
         (assoc-in [:foundations (:suit card)] (:rank card)))
       board)))
 
+(defn- freecell->cascade [board freecell-index cascade-index]
+  (let [free-card (get-in board [:freecells freecell-index])
+        casc-card (defs/top-card (get-in board [:cascades cascade-index]))]
+    (if (or (and free-card
+                 (nil? casc-card))
+            (defs/goes-on-cascade? casc-card free-card))
+      (-> board
+        (assoc-in [:freecells freecell-index] nil)
+        (update-in [:cascades cascade-index] conj free-card))
+      board)))
+
 (defn move
   "Move a single card on the board.  Codes:
   - a-f: columns 1-4
@@ -43,21 +54,25 @@
   - q-r: freecells
   - u: all foundation piles"
   [board from-code to-code]
-  (let [cascade-from (cascade-index from-code)
-        freecell-to (freecell-index to-code)
-        freecell-from (freecell-index from-code)
-        foundation-to (foundation-code? to-code)]
-    (cond (and cascade-from
-               freecell-to)
-          (cascade->freecell board cascade-from freecell-to)
+  (let [casc-fr (cascade-index from-code)
+        free-to (freecell-index to-code)
+        free-fr (freecell-index from-code)
+        foun-to (foundation-code? to-code)
+        casc-to (cascade-index to-code)]
+    (cond (and casc-fr
+               free-to)
+          (cascade->freecell board casc-fr free-to)
           ,,,
-          (and freecell-from
-               foundation-to)
-          (freecell->foundation board freecell-from)
+          (and free-fr
+               foun-to)
+          (freecell->foundation board free-fr)
           ,,,
-          (and cascade-from
-               foundation-to)
-          (cascade->foundation board cascade-from)
+          (and casc-fr
+               foun-to)
+          (cascade->foundation board casc-fr)
+          ,,,
+          (and free-fr casc-to)
+          (freecell->cascade board free-fr casc-to)
           ,,,
           :else board)))
 
@@ -82,4 +97,29 @@
       (move "w" "u")
       (move "s" "q")
       (move "s" "u")
-      (move "s" "u"))))
+      (move "s" "u")
+      (move "q" "a")
+      (move "w" "a")
+      (move "e" "f")
+      (move "s" "q")
+      (move "q" "d")
+      (move "r" "s")
+      (move "f" "q")
+      (move "f" "e")
+      (move "e" "a")
+      (move "q" "a")
+      (move "f" "q")
+      (move "f" "r")
+      (move "r" "d")
+      (move "f" "r")
+      (move "r" "k")
+      (move "f" "r")
+      (move "r" "a")
+      (move "f" "u")
+      (move "j" "r")
+      (move "r" "f")
+      (move "d" "r")
+      (move "d" "e")
+      (move "e" "f")
+      (move "r" "f")
+      )))
