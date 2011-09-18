@@ -47,6 +47,16 @@
         (update-in [:cascades cascade-index] conj free-card))
       board)))
 
+(defn- freecell->freecell [board freecell-from freecell-to]
+  (let [fr-card (get-in board [:freecells freecell-from])
+        to-card (get-in board [:freecells freecell-to])]
+    (if (and fr-card
+             (nil? to-card))
+      (-> board
+        (assoc-in [:freecells freecell-from] nil)
+        (assoc-in [:freecells freecell-to] fr-card))
+      board)))
+
 (defn move
   "Move a single card on the board.  Codes:
   - a-f: columns 1-4
@@ -71,8 +81,13 @@
                foun-to)
           (cascade->foundation board casc-fr)
           ,,,
-          (and free-fr casc-to)
+          (and free-fr
+               casc-to)
           (freecell->cascade board free-fr casc-to)
+          ,,,
+          (and free-fr
+               free-to)
+          (freecell->freecell board free-fr free-to)
           ,,,
           :else board)))
 
@@ -122,4 +137,7 @@
       (move "d" "e")
       (move "e" "f")
       (move "r" "f")
+      (move "q" "r")
+      (move "e" "w")
+      (move "w" "e")
       )))
