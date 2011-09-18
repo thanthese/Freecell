@@ -1,7 +1,8 @@
 (ns freecell.core
   (:require [freecell.definitions :as defs])
   (:require [freecell.display :as disp])
-  (:require [freecell.annotations :as anno]))
+  (:require [freecell.annotations :as anno])
+  (:gen-class))
 
 (defn -main [& args]
   (let [deck (shuffle (defs/deck))]
