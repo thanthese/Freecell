@@ -10,6 +10,32 @@
 (defn- freecell-index [code]
   (get {"q" 0, "w" 1, "e" 2, "r" 3} code))
 
+(defn- max-cards-to-move
+  "Maximum number of cards that can currently be moved at one time.
+  TODO: take empty cascades into account."
+  [board to-cascade-index]
+  (inc (- 4 (count (filter identity (:freecells board))))))
+
+(defn- first-continuous-group
+  "First continuous sequence of cards on cascade."
+  [cascade]
+  (let [pairs (partition 2 1 (reverse (conj cascade nil)))]
+    (reverse
+      (map second
+           (take-while (fn [[top bot]]
+                         (or (nil? top)
+                             (defs/goes-on-cascade? bot top)))
+                       pairs)))))
+
+(defn- first-continuous-cascade-to
+  "Continuous cascade down to the given card.  Solves the problem of 'If I want
+  to move this cascade to that card, which cards will I have to move?'"
+  [cascade to-card]
+  (drop-while (fn [card]
+                (not (or (nil? to-card)
+                         (defs/goes-on-cascade? to-card card))))
+              (first-continuous-group cascade)))
+
 (defn- cascade->freecell [board cascade-index freecell-index]
   (let [cascade-card (defs/top-card (get-in board [:cascades cascade-index]))
         freecell-card (get-in board [:freecells freecell-index])]
@@ -48,16 +74,17 @@
       board)))
 
 (defn- cascade->cascade [board cascade-from cascade-to]
-  (let [fr-card (defs/top-card (get-in board [:cascades cascade-from]))
-        to-card (defs/top-card (get-in board [:cascades cascade-to]))]
-    (if (or (and fr-card
-                 (nil? to-card))
-            (and fr-card
-                 to-card
-                 (defs/goes-on-cascade? to-card fr-card)))
+  (let [to-card (defs/top-card (get-in board [:cascades cascade-to]))
+        from-group (first-continuous-cascade-to
+                     (get-in board [:cascades cascade-from])
+                     to-card)
+        size (count from-group)]
+    (if (and (> size 0)
+             (<= size (max-cards-to-move board cascade-to)))
       (-> board
-        (update-in [:cascades cascade-from] pop)
-        (update-in [:cascades cascade-to] conj fr-card))
+        (update-in [:cascades cascade-from] #(vec (drop-last size %)))
+        (update-in [:cascades cascade-to] (fn [casc]
+                                            (vec (concat casc from-group)))))
       board)))
 
 (defn- freecell->freecell [board freecell-from freecell-to]
