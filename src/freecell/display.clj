@@ -67,6 +67,8 @@
   (for [[suit rank] foundations]
     (pretty-card {:suit suit :rank rank})))
 
+(def banner (apply str (repeat 8 "\u2500\u2500\u2500\u2500\u2500\u2500\u2500   ")))
+
 (defn board
   "Pretty-print board."
   [{:keys [freecells foundations cascades]}]
@@ -74,7 +76,7 @@
     (println)
     (println (str (apply str (pretty-freecells freecells))
                   (apply str (pretty-foundations foundations))))
-    (println)
+    (println banner)
     (doseq [line (pretty-cascades cascades)]
       (println line))
     (println)))
