@@ -67,7 +67,10 @@
   (for [[suit rank] foundations]
     (pretty-card {:suit suit :rank rank})))
 
-(def banner (apply str (repeat 8 "\u2500\u2500\u2500\u2500\u2500\u2500\u2500   ")))
+(defn- times-str [n string]
+  (apply str (repeat n string)))
+
+(def banner (times-str 8 (str (times-str 7 \u2500) "   ")))
 
 (defn board
   "Pretty-print board."
