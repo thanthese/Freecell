@@ -28,8 +28,9 @@
                        pairs)))))
 
 (defn- first-continuous-cascade-to
-  "Continuous cascade down to the given card.  Solves the problem of 'If I want
-  to move this cascade to that card, which cards will I have to move?'"
+  "Continuous cascade down to what would play on the given card.  Solves the
+  problem of 'If I want to move this cascade to that card, which cards will I
+  have to move?'"
   [cascade to-card]
   (drop-while (fn [card]
                 (not (or (nil? to-card)
@@ -75,12 +76,16 @@
 
 (defn- cascade->cascade [board cascade-from cascade-to]
   (let [to-card (defs/top-card (get-in board [:cascades cascade-to]))
-        from-group (first-continuous-cascade-to
+        max (max-cards-to-move board cascade-to)
+        basic-from-group (first-continuous-cascade-to
                      (get-in board [:cascades cascade-from])
                      to-card)
+        from-group (if (nil? to-card)
+                     (take-last max basic-from-group)
+                     basic-from-group)
         size (count from-group)]
     (if (and (> size 0)
-             (<= size (max-cards-to-move board cascade-to)))
+             (<= size max))
       (-> board
         (update-in [:cascades cascade-from] #(vec (drop-last size %)))
         (update-in [:cascades cascade-to] (fn [casc]
@@ -128,3 +133,21 @@
           (freecell->foundation board free-fr)
           ,
           :else board)))
+
+;;; tests maps
+
+(def sample-board (-> (defs/board (shuffle (defs/deck)))
+                    (assoc-in [:cascades 0]
+                            [{:suit :spade, :rank 9}
+                             {:suit :heart, :rank 8}
+                             {:suit :spade, :rank 7}
+                             {:suit :heart, :rank 6}
+                             {:suit :spade, :rank 5}
+                             {:suit :heart, :rank 4}
+                             {:suit :spade, :rank 3}])
+                    (assoc-in [:cascades 1]
+                            [])))
+
+; (freecell.display/board
+;   (freecell.annotations/calculate-annotations
+;     (move sample-board "a" "s")))
