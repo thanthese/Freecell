@@ -5,6 +5,7 @@ Command-line freecell.  Features hint system.
 ## Usage from REPL
 
     lein repl
+
     (-main)
 
 ## Package and run as jar
