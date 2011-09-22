@@ -13,6 +13,8 @@ Command-line freecell.  Features hint system.
 
     java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
 
+Note: I've included a pre-packaged jar in the source.
+
 ## Instructions
 
 Freecell, the best solitaire evar!
@@ -30,7 +32,8 @@ the first freecell.  You can enter multiple moves at once: `aqswde<Enter>`
 
 Double-press any code to Do What I Mean™.  For example, `aa<Enter>`.
 
-    Legend:
+Legend:
+
     - ☼ :  card could move to top of cascade
     - ★ :  card could move to foundation (will cover ☼ )
     - § :  card's parent or child is in same cascade, unconnected
@@ -39,9 +42,17 @@ Double-press any code to Do What I Mean™.  For example, `aa<Enter>`.
     - │ :  card is connected to parent/child/both
     - ┘ :
 
-Q: quit  |  N: new game  |  R: restart game  |  ?: this help
+Additional keys:
+
+    - Q: quit
+    - N: new game
+    - R: restart game
+    - ?: this help
 
 ## "Screenshot"
+
+Note: Your browser may not render the unicode symbols/spaces correctly.  View
+`screenshot.txt` for a more accurate rendering.
 
     9♠        J♢                             ♡        A♠        4♢        3♣
     ───────   ───────   ───────   ───────   ───────   ───────   ───────   ───────
