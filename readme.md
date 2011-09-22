@@ -1,5 +1,9 @@
 Command-line freecell.  Features annotation system.
 
+Screenshot:
+
+![Screenshot](http://github.com/thanthese/Freecell/raw/master/screenshot.png "Screenshot")
+
 # To use
 
 Download the jar, then run it with
@@ -54,10 +58,6 @@ Additional keys:
     - N: new game
     - R: restart game
     - ?: help
-
-# Screenshot
-
-![Screenshot](http://github.com/thanthese/Freecell/raw/master/screenshot.png "Screenshot")
 
 # License
 
