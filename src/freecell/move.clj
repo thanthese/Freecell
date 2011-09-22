@@ -13,7 +13,7 @@
 (defn- max-cards-to-move
   "Maximum number of cards that can currently be moved at one time.
   TODO: take empty cascades into account."
-  [board to-cascade-index]
+  [board to-empty-cascade?]
   (inc (- 4 (count (filter identity (:freecells board))))))
 
 (defn- first-continuous-group
@@ -27,15 +27,34 @@
                              (defs/goes-on-cascade? bot top)))
                        pairs)))))
 
-(defn- first-continuous-cascade-to
-  "Continuous cascade down to what would play on the given card.  Solves the
-  problem of 'If I want to move this cascade to that card, which cards will I
-  have to move?'"
-  [cascade to-card]
-  (drop-while (fn [card]
-                (not (or (nil? to-card)
-                         (defs/goes-on-cascade? to-card card))))
-              (first-continuous-group cascade)))
+(defn- cascade->nil-card [board cascade]
+  "Return max group of cards that can be moved from cascade to an empty
+  cascade.  Takes frecell/empty column constraints into account."
+  (take-last (max-cards-to-move board true)
+             (first-continuous-group cascade)))
+
+(defn- cascade->existing-card [board cascade to-card]
+  "Return group of cards from top of cascade that can be played on top card.
+  Takes freecell/empty column constraints into account."
+  (let [max (max-cards-to-move board false)
+        from-group (drop-while (fn [card]
+                                 (not (defs/goes-on-cascade? to-card card)))
+                               (first-continuous-group cascade))]
+    (when (<= (count from-group) max)
+      from-group)))
+
+(defn- cascade->cascade [board cascade-from cascade-to]
+  (let [to-card (defs/top-card (get-in board [:cascades cascade-to]))
+        cascade (get-in board [:cascades cascade-from])
+        from-group (if (nil? to-card)
+                     (cascade->nil-card board cascade)
+                     (cascade->existing-card board cascade to-card))
+        size (count from-group)]
+    (if (> size 0)
+      (-> board
+        (update-in [:cascades cascade-from] #(vec (drop-last size %)))
+        (update-in [:cascades cascade-to] #(vec (concat % from-group))))
+      board)))
 
 (defn- cascade->freecell [board cascade-index freecell-index]
   (let [cascade-card (defs/top-card (get-in board [:cascades cascade-index]))
@@ -72,24 +91,6 @@
       (-> board
         (assoc-in [:freecells freecell-index] nil)
         (update-in [:cascades cascade-index] conj free-card))
-      board)))
-
-(defn- cascade->cascade [board cascade-from cascade-to]
-  (let [to-card (defs/top-card (get-in board [:cascades cascade-to]))
-        max (max-cards-to-move board cascade-to)
-        basic-from-group (first-continuous-cascade-to
-                     (get-in board [:cascades cascade-from])
-                     to-card)
-        from-group (if (nil? to-card)
-                     (take-last max basic-from-group)
-                     basic-from-group)
-        size (count from-group)]
-    (if (and (> size 0)
-             (<= size max))
-      (-> board
-        (update-in [:cascades cascade-from] #(vec (drop-last size %)))
-        (update-in [:cascades cascade-to] (fn [casc]
-                                            (vec (concat casc from-group)))))
       board)))
 
 (defn- freecell->freecell [board freecell-from freecell-to]
@@ -136,18 +137,20 @@
 
 ;;; tests maps
 
-(def sample-board (-> (defs/board (shuffle (defs/deck)))
-                    (assoc-in [:cascades 0]
-                            [{:suit :spade, :rank 9}
-                             {:suit :heart, :rank 8}
-                             {:suit :spade, :rank 7}
-                             {:suit :heart, :rank 6}
-                             {:suit :spade, :rank 5}
-                             {:suit :heart, :rank 4}
-                             {:suit :spade, :rank 3}])
-                    (assoc-in [:cascades 1]
-                            [])))
-
+; (def sample-board (-> (defs/board (shuffle (defs/deck)))
+;                     (assoc-in [:cascades 0]
+;                             [{:suit :spade, :rank 9}
+;                              {:suit :heart, :rank 8}
+;                              {:suit :spade, :rank 7}
+;                              {:suit :heart, :rank 6}
+;                              {:suit :spade, :rank 5}
+;                              {:suit :heart, :rank 4}
+;                              {:suit :spade, :rank 3}])
+;                     (assoc-in [:cascades 1]
+;                             [])))
+;
 ; (freecell.display/board
 ;   (freecell.annotations/calculate-annotations
-;     (move sample-board "a" "s")))
+;     (-> sample-board
+;       (move "a" "s")
+;       (move "s" "a"))))

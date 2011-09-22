@@ -6,12 +6,10 @@
   (:gen-class))
 
 ;;; todo
-; bug (fixed): can't move only part of a cascade chain to an empty cascade
-; - split cascade->cascade into nil-cascade and not branches
+; increase number of cards that can move based on empty columns
 ; bug: tangles don't show if neighbors
 ; "A" for automatic move to foundation
 ; "double" for "do what I mean"
-; allow to move longer cascades if empty cascades
 
 (def help-msg
   (str "Freecell, the best solitaire evar!
