@@ -13,13 +13,11 @@ Command-line freecell.  Features hint system.
 
     java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
 
-Note: I've included a pre-packaged jar in the source.
+Note: I've included a pre-packaged jar.
 
 ## Instructions
 
-Freecell, the best solitaire evar!
-
-To move, enter from-to coordinate then <Enter>. Codes:
+To move, enter from-to coordinate then `<Enter>`. Codes:
 
     - a-f :  cascades 1-4
     - j-; :  cascades 5-8
@@ -47,12 +45,13 @@ Additional keys:
     - Q: quit
     - N: new game
     - R: restart game
-    - ?: this help
+    - ?: help
 
 ## "Screenshot"
 
-Note: Your browser may not render the unicode symbols/spaces correctly.  View
-`screenshot.txt` for a more accurate rendering.
+Note: Your browser may not render the unicode symbols/spaces correctly.  Just
+imagine it as though it were aligned.  View `screenshot.txt` in a terminal for
+a more accurate rendering.
 
     9♠        J♢                             ♡        A♠        4♢        3♣
     ───────   ───────   ───────   ───────   ───────   ───────   ───────   ───────
