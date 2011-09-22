@@ -6,7 +6,6 @@
   (:gen-class))
 
 ;;; todo
-; increase number of cards that can move based on empty columns
 ; bug: tangles don't show if neighbors
 ; "A" for automatic move to foundation
 ; "double" for "do what I mean"

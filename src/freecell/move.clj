@@ -11,10 +11,12 @@
   (get {"q" 0, "w" 1, "e" 2, "r" 3} code))
 
 (defn- max-cards-to-move
-  "Maximum number of cards that can currently be moved at one time.
-  TODO: take empty cascades into account."
+  "Maximum number of cards that can currently be moved at one time."
   [board to-empty-cascade?]
-  (inc (- 4 (count (filter identity (:freecells board))))))
+  (let [empty-freecells (- 4 (count (filter identity (:freecells board))))
+        empty-columns (count (filter empty? (:cascades board)))]
+    (* (inc empty-freecells)
+       (Math/pow 2 ((if to-empty-cascade? dec identity) empty-columns)))))
 
 (defn- first-continuous-group
   "First continuous sequence of cards on cascade."
