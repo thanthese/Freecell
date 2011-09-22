@@ -7,7 +7,6 @@
 
 ;;; todo
 ; "A" for automatic move to foundation
-; "double" for "do what I mean"
 
 (def help-msg
   (str "Freecell, the best solitaire evar!
@@ -20,6 +19,8 @@
 
     For Example, aq<Enter> would move the top card from the first cascade into
     the first freecell.  You can enter multiple moves at once: aqswde<Enter>
+
+    Double-press any code to Do What I Mean\u2122.  For example, aa<Enter>.
 
   Legend:
   - " disp/cascade-mobility-symbol " :  card could move to top of cascade

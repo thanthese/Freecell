@@ -105,6 +105,23 @@
         (assoc-in [:freecells freecell-to] fr-card))
       board)))
 
+(defn- do-what-I-mean
+  "On a double hit, do what the user probably intended."
+  [board from-code]
+  (let [all-codes (remove (partial = from-code)
+                          ["u"
+                           "a" "s" "d" "f"
+                           "j" "k" "l" ";"
+                           "q" "w" "e" "r"])]
+    (loop [to-codes all-codes]
+      (let [to-code (first to-codes)]
+        (if to-code
+          (let [new-board (move board from-code to-code)]
+            (if (= board new-board)
+              (recur (rest to-codes))
+              new-board))
+          board)))))
+
 (defn move
   "Move a single card on the board.  Codes:
   - a-f: columns 1-4
@@ -117,7 +134,10 @@
         free-fr (freecell-index from-code)
         foun-to (foundation-code? to-code)
         casc-to (cascade-index to-code)]
-    (cond (and casc-fr casc-to)
+    (cond (= from-code to-code)
+          (do-what-I-mean board from-code)
+          ,
+          (and casc-fr casc-to)
           (cascade->cascade board casc-fr casc-to)
           ,
           (and casc-fr free-to)
