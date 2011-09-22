@@ -1,22 +1,29 @@
-# freecell
+Command-line freecell.  Features annotation system.
 
-Command-line freecell.  Features hint system.
+# To use
 
-## Usage from REPL
+Download the jar, then run it with
+
+    java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
+
+Alternately, if you're using [Leiningen][l] you can run it from the REPL by
+navigating to `<whatever>/freecell` then
 
     lein repl
 
     (-main)
 
-## Package and run as jar
+## Building the jar
+
+If you fancy building the jar yourself, you'll again need
+[Leiningen][l].  Navigate to
+`<whatever>/freecell`, then
+
+[l]: https://github.com/technomancy/leiningen
 
     lein uberjar
 
-    java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
-
-Note: I've included a pre-packaged jar.
-
-## Instructions
+# Instructions
 
 To move, enter from-to coordinate then `<Enter>`. Codes:
 
@@ -48,29 +55,11 @@ Additional keys:
     - R: restart game
     - ?: help
 
-## "Screenshot"
+# Screenshot
 
-Note: Your browser may not render the unicode symbols/spaces correctly.  Just
-imagine it as though it were aligned.  View `screenshot.txt` in a terminal for
-a more accurate rendering.
+![Screenshot](screenshot.png "Screenshot")
 
-    9♠        J♢                             ♡        A♠        4♢        3♣
-    ───────   ───────   ───────   ───────   ───────   ───────   ───────   ───────
-    Q♠    §   5♣ ┐      8♡  ☼ ☰   6♢    ☰   7♣        6♠        Q♡ ┐
-    A♡  ★ §   4♡ │      8♢  ☼ ☰   t♢  ☼     8♣    §   7♠        J♠ ┘
-    K♢    §   3♠ ┘      5♢ ┐★     6♡    ☰   K♡ ┐      K♣ ┐
-    2♠  ★ §             4♠ ┘      2♡  ☼     Q♣ │      Q♢ │
-    K♠                            7♢  ☼ ☰   J♡ │      J♣ │
-    5♠                            t♠        t♣ │      t♡ │☼
-    9♢ ┐                          7♡ ┐☼ ☰   9♡ ┘  §   9♣ ┘
-    8♠ ┘☼                         6♣ │  §
-                                  5♡ │
-                                  4♣ │★
-                                  3♡ ┘☼
-
-    Enter move (? for help):
-
-## License
+# License
 
 Copyright (C) 2011 thanthese productions
 

@@ -47,6 +47,7 @@
               (re-find #"\?" user-command) (do
                                              (println help-msg)
                                              (recur board))
+              (re-find #"U" user-command) (recur (move/all-stars board))
               (re-find #"A" user-command) (recur (move/all-stars board))
               :else (recur
                       (reduce (fn [acc-board [from-code to-code]]
