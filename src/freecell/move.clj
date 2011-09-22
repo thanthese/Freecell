@@ -105,22 +105,7 @@
         (assoc-in [:freecells freecell-to] fr-card))
       board)))
 
-(defn- do-what-I-mean
-  "On a double hit, do what the user probably intended."
-  [board from-code]
-  (let [all-codes (remove (partial = from-code)
-                          ["u"
-                           "a" "s" "d" "f"
-                           "j" "k" "l" ";"
-                           "q" "w" "e" "r"])]
-    (loop [to-codes all-codes]
-      (let [to-code (first to-codes)]
-        (if to-code
-          (let [new-board (move board from-code to-code)]
-            (if (= board new-board)
-              (recur (rest to-codes))
-              new-board))
-          board)))))
+(declare do-what-I-mean)
 
 (defn move
   "Move a single card on the board.  Codes:
@@ -157,22 +142,36 @@
           ,
           :else board)))
 
-;;; tests maps
+(defn- do-what-I-mean
+  "On a double hit, do what the user probably intended."
+  [board from-code]
+  (let [all-codes (remove (partial = from-code)
+                          ["u"
+                           "a" "s" "d" "f"
+                           "j" "k" "l" ";"
+                           "q" "w" "e" "r"])]
+    (loop [to-codes all-codes]
+      (let [to-code (first to-codes)]
+        (if to-code
+          (let [new-board (move board from-code to-code)]
+            (if (= board new-board)
+              (recur (rest to-codes))
+              new-board))
+          board)))))
 
-; (def sample-board (-> (defs/board (shuffle (defs/deck)))
-;                     (assoc-in [:cascades 0]
-;                             [{:suit :spade, :rank 9}
-;                              {:suit :heart, :rank 8}
-;                              {:suit :spade, :rank 7}
-;                              {:suit :heart, :rank 6}
-;                              {:suit :spade, :rank 5}
-;                              {:suit :heart, :rank 4}
-;                              {:suit :spade, :rank 3}])
-;                     (assoc-in [:cascades 1]
-;                             [])))
-;
-; (freecell.display/board
-;   (freecell.annotations/calculate-annotations
-;     (-> sample-board
-;       (move "a" "s")
-;       (move "s" "a"))))
+(defn all-stars
+  "Recursively move all possible cards to the foundation piles, until no
+  moveable cards are left."
+  [board]
+  (let [all-positions ["a" "s" "d" "f"
+                       "j" "k" "l" ";"
+                       "q" "w" "e" "r"]]
+    (loop [entry-board board]
+      (let [changed-board (reduce (fn [acc-board code]
+                                    (move acc-board code "u"))
+                                  entry-board
+                                  all-positions)]
+        (if (= entry-board changed-board)
+          changed-board
+          (recur changed-board))))))
+

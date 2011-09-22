@@ -5,9 +5,6 @@
   (:require [freecell.move :as move])
   (:gen-class))
 
-;;; todo
-; "A" for automatic move to foundation
-
 (def help-msg
   (str "Freecell, the best solitaire evar!
 
@@ -16,6 +13,7 @@
   - j-; :  cascades 5-8
   - q-r :  freecells
   - u   :  all foundations
+  - A   :  move all cards to foundation piles iteratively
 
     For Example, aq<Enter> would move the top card from the first cascade into
     the first freecell.  You can enter multiple moves at once: aqswde<Enter>
@@ -49,6 +47,7 @@
               (re-find #"\?" user-command) (do
                                              (println help-msg)
                                              (recur board))
+              (re-find #"A" user-command) (recur (move/all-stars board))
               :else (recur
                       (reduce (fn [acc-board [from-code to-code]]
                                 (move/move acc-board
