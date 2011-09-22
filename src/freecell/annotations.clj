@@ -72,12 +72,14 @@
   "Cascade with :tangled annotations added.  True when a card could play on or
   be played on a card in the same cascade that isn't an immediate neighbor."
   [cascade]
-  (vec (for [[_ card _ :as neighbors] (partition 3 1 (nil-wrap cascade))]
+  (vec (for [[bot card top :as neighbors] (partition 3 1 (nil-wrap cascade))]
          (let [far-aways (set/difference (set cascade) (set neighbors))]
            (assoc card :tangled
-                  (some (fn [far] (or (defs/goes-on-cascade? card far)
-                                      (defs/goes-on-cascade? far card)))
-                        far-aways))))))
+                  (or (some (fn [far] (or (defs/goes-on-cascade? card far)
+                                          (defs/goes-on-cascade? far card)))
+                            far-aways)
+                      (defs/goes-on-cascade? card bot)
+                      (defs/goes-on-cascade? top card)))))))
 
 (defn calculate-annotations
   "Board with annotations added."
