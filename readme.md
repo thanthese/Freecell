@@ -57,7 +57,7 @@ Additional keys:
 
 # Screenshot
 
-![Screenshot](screenshot.png "Screenshot")
+![Screenshot](http://github.com/thanthese/Freecell/raw/master/screenshot.png "Screenshot")
 
 # License
 
