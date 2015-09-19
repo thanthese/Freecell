@@ -1,27 +1,31 @@
-Command-line freecell.  Features annotation system.
+Command-line freecell, featuring an annotation system.
 
-Screenshot:
-
-![Screenshot](http://github.com/thanthese/Freecell/raw/master/screenshot.png "Screenshot")
+![Screenshot](https://raw.githubusercontent.com/thanthese/Freecell/master/screenshot.png "Screenshot")
 
 # To use
 
-Download the jar, then run it with
+If you're using [Leiningen][l] you can run it from the REPL by navigating to `<whatever>/freecell` then
+
+    lein repl
+    (-main)
+
+or, even more simply,
+
+    lein run
+
+Alternately, you can run the provided jar with
 
     java -Dfile.encoding=utf-8 -jar freecell-0.1-dev-standalone.jar
 
-Alternately, if you're using [Leiningen][l] you can run it from the REPL by
-navigating to `<whatever>/freecell` then
+*Note*: This program uses extended unicode characters. To test that your terminal and terminal font support them try
 
-    lein repl
+    cat special-chars-test.txt
 
-    (-main)
+and you should see `☼ ★ ☰ § ┐ │ ┘ ♠ ♡ ♢ ♣ ─`.
 
 ## Building the jar
 
-If you fancy building the jar yourself, you'll again need
-[Leiningen][l].  Navigate to
-`<whatever>/freecell`, then
+If you fancy building the jar yourself, you'll again need [Leiningen][l]. Navigate to `<whatever>/freecell`, then
 
 [l]: https://github.com/technomancy/leiningen
 
@@ -37,10 +41,9 @@ To move, enter from-to coordinate then `<Enter>`. Codes:
     - u   :  all foundations
     - A   :  move all cards to foundation piles iteratively
 
-For Example, `aq<Enter>` would move the top card from the first cascade into
-the first freecell.  You can enter multiple moves at once: `aqswde<Enter>`
+For Example, `aq<Enter>` would move the top card from the first cascade into the first freecell. You can enter multiple moves at once: `aqswde<Enter>`
 
-Double-press any code to Do What I Mean™.  For example, `aa<Enter>`.
+Double-press any code to Do What I Mean™. For example, `aa<Enter>`.
 
 Legend:
 
