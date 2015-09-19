@@ -41,7 +41,7 @@ To move, enter from-to coordinate then `<Enter>`. Codes:
     - u   :  all foundations
     - A   :  move all cards to foundation piles iteratively
 
-For Example, `aq<Enter>` would move the top card from the first cascade into the first freecell. You can enter multiple moves at once: `aqswde<Enter>`
+For example, `aq<Enter>` would move the top card from the first cascade into the first freecell. You can enter multiple moves at once: `aqswde<Enter>`
 
 Double-press any code to Do What I Mean™. For example, `aa<Enter>`.
 
